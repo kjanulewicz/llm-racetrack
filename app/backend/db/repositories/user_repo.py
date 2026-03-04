@@ -5,9 +5,9 @@ from __future__ import annotations
 from typing import Optional
 
 from azure.cosmos.aio import ContainerProxy
+from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 from db.cosmos_client import get_container, CONTAINER_USERS
-from models.schemas import UserProfile
 
 
 def _container() -> ContainerProxy:
@@ -18,7 +18,7 @@ async def get_user(user_oid: str) -> Optional[dict]:
     """Fetch a user document by OID (also the partition key)."""
     try:
         return await _container().read_item(item=user_oid, partition_key=user_oid)
-    except Exception:
+    except CosmosResourceNotFoundError:
         return None
 
 

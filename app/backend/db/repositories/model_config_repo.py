@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Optional
 
 from azure.cosmos.aio import ContainerProxy
+from azure.cosmos.exceptions import CosmosResourceNotFoundError
 
 from db.cosmos_client import get_container, CONTAINER_MODEL_CONFIGS
 
@@ -31,7 +32,7 @@ async def get_config(config_id: str, user_oid: str) -> Optional[dict]:
     """Fetch a single model config by ID within the user's partition."""
     try:
         return await _container().read_item(item=config_id, partition_key=user_oid)
-    except Exception:
+    except CosmosResourceNotFoundError:
         return None
 
 
