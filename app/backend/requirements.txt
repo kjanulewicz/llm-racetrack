@@ -6,6 +6,6 @@ azure-identity>=1.15,<2
 azure-ai-inference>=1.0.0b1,<2
 azure-cosmos>=4.7,<5
 pyjwt[crypto]>=2.8,<3
-cryptography>=42,<44
+cryptography>=46.0.5
 python-dotenv>=1.0,<2
 pydantic-settings>=2.2,<3
