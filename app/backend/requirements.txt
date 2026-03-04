@@ -9,3 +9,4 @@ pyjwt[crypto]>=2.8,<3
 cryptography>=46.0.5
 python-dotenv>=1.0,<2
 pydantic-settings>=2.2,<3
+sse-starlette>=1.6,<4

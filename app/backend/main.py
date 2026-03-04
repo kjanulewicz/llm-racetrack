@@ -2,8 +2,6 @@
 
 This module creates the FastAPI application with CORS, lifespan hooks
 (Cosmos DB init/close, model config loading), and a health-check endpoint.
-
-Routes will be added in later phases.
 """
 
 from __future__ import annotations
@@ -16,6 +14,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config.loader import load_model_defaults, get_model_defaults
 from db.cosmos_client import init_cosmos, close_cosmos
+from routers import models as models_router
+from routers import race as race_router
 from settings import get_settings
 
 
@@ -47,6 +47,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# --------------------------------------------------------------------------
+# Routers
+# --------------------------------------------------------------------------
+
+app.include_router(models_router.router)
+app.include_router(race_router.router)
 
 
 # --------------------------------------------------------------------------

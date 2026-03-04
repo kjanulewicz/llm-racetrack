@@ -116,3 +116,33 @@ class DefaultModel(BaseModel):
     provider: str
     description: str = ""
     default_endpoint_url: Optional[str] = None
+
+
+# ---------------------------------------------------------------------------
+# API request / response schemas
+# ---------------------------------------------------------------------------
+
+class RaceModelEntry(BaseModel):
+    """A single model slot within a race request."""
+
+    model_config_id: str
+    system_prompt: str = ""
+
+
+class RaceRequest(BaseModel):
+    """POST /race request body."""
+
+    user_input: str
+    models: list[RaceModelEntry] = Field(..., min_length=2, max_length=4)
+
+
+class ModelConfigCreate(BaseModel):
+    """POST /me/models request body."""
+
+    base_model_id: str
+    label: str
+    provider: str  # "azure_openai" | "azure_foundry"
+    endpoint_url: Optional[str] = None
+    subscription_id: Optional[str] = None
+    resource_group: Optional[str] = None
+    color: str = "#38bdf8"
