@@ -1,0 +1,11 @@
+fastapi>=0.110,<1
+uvicorn[standard]>=0.29,<1
+httpx>=0.27,<1
+openai>=1.14,<2
+azure-identity>=1.15,<2
+azure-ai-inference>=1.0.0b1,<2
+azure-cosmos>=4.7,<5
+pyjwt[crypto]>=2.8,<3
+cryptography>=42,<44
+python-dotenv>=1.0,<2
+pydantic-settings>=2.2,<3
