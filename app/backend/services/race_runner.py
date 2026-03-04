@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import time
 import uuid
 from datetime import datetime, timezone
@@ -23,6 +24,8 @@ from models.schemas import (
 )
 from db.repositories import race_repo
 from services import azure_openai, azure_foundry
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -212,7 +215,7 @@ async def run_race(
     try:
         await race_repo.save_race(race_doc.model_dump(mode="json"))
     except Exception:
-        pass  # Best-effort persistence — don't break SSE stream
+        logger.exception("Failed to persist race %s to Cosmos DB", race_id)
 
     # Final event with race_id so the frontend can reference it
     yield _sse_event(

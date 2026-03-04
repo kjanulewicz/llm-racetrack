@@ -8,6 +8,7 @@ use to scope all Cosmos DB queries to the authenticated user.
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 
 import httpx
@@ -48,21 +49,23 @@ oauth2_scheme = OAuth2AuthorizationCodeBearer(
 # ---------------------------------------------------------------------------
 
 _jwks_cache: dict | None = None
+_jwks_lock = asyncio.Lock()
 
 
 async def _get_jwks(tenant_id: str) -> dict:
     """Fetch (and cache) the tenant's JSON Web Key Set."""
     global _jwks_cache
-    if _jwks_cache is not None:
+    async with _jwks_lock:
+        if _jwks_cache is not None:
+            return _jwks_cache
+        jwks_url = (
+            f"https://login.microsoftonline.com/{tenant_id}/discovery/v2.0/keys"
+        )
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(jwks_url)
+            resp.raise_for_status()
+        _jwks_cache = resp.json()
         return _jwks_cache
-    jwks_url = (
-        f"https://login.microsoftonline.com/{tenant_id}/discovery/v2.0/keys"
-    )
-    async with httpx.AsyncClient() as client:
-        resp = await client.get(jwks_url)
-        resp.raise_for_status()
-    _jwks_cache = resp.json()
-    return _jwks_cache
 
 
 def _find_rsa_key(jwks: dict, kid: str) -> dict | None:
@@ -106,9 +109,10 @@ async def validate_entra_token(
     jwks = await _get_jwks(tenant_id)
     rsa_key = _find_rsa_key(jwks, kid)
     if rsa_key is None:
-        # Key might have rotated — refetch once.
-        global _jwks_cache
-        _jwks_cache = None
+        # Key might have rotated — invalidate cache and refetch once.
+        async with _jwks_lock:
+            global _jwks_cache
+            _jwks_cache = None
         jwks = await _get_jwks(tenant_id)
         rsa_key = _find_rsa_key(jwks, kid)
         if rsa_key is None:
