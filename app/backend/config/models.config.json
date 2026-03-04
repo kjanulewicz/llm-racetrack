@@ -1,0 +1,28 @@
+[
+  {
+    "id": "gpt-4o",
+    "name": "GPT-4o",
+    "provider": "azure_openai",
+    "description": "OpenAI GPT-4o via Azure OpenAI Service"
+  },
+  {
+    "id": "gpt-4o-mini",
+    "name": "GPT-4o mini",
+    "provider": "azure_openai",
+    "description": "Smaller, faster GPT-4o variant"
+  },
+  {
+    "id": "mistral-large",
+    "name": "Mistral Large",
+    "provider": "azure_foundry",
+    "description": "Mistral Large via Azure AI Foundry",
+    "default_endpoint_url": null
+  },
+  {
+    "id": "llama-3-70b",
+    "name": "Llama 3 70B",
+    "provider": "azure_foundry",
+    "description": "Meta Llama 3 70B via Azure AI Foundry",
+    "default_endpoint_url": null
+  }
+]

@@ -1,0 +1,19 @@
+# Terraform — secrets
+infra/terraform.tfvars
+infra/.terraform/
+infra/*.tfstate
+infra/*.tfstate.backup
+
+# Application
+app/backend/.env
+app/frontend/.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+
+# Node
+node_modules/
+app/frontend/dist/
