@@ -21,7 +21,6 @@ export default function AddModelModal({ open, onClose, onSaved }) {
   const [modelName, setModelName] = useState("");
   const [label, setLabel] = useState("");
   const [color, setColor] = useState(NEON_COLORS[0]);
-  const [systemPrompt, setSystemPrompt] = useState("");
   const [subscriptionId, setSubscriptionId] = useState("");
   const [resourceGroup, setResourceGroup] = useState("");
   const [saving, setSaving] = useState(false);
@@ -41,7 +40,6 @@ export default function AddModelModal({ open, onClose, onSaved }) {
     setModelName("");
     setLabel("");
     setColor(NEON_COLORS[0]);
-    setSystemPrompt("");
     setSubscriptionId("");
     setResourceGroup("");
     setError(null);
@@ -195,20 +193,6 @@ export default function AddModelModal({ open, onClose, onSaved }) {
               ))}
             </div>
           </div>
-
-          {/* System Prompt */}
-          <label className="flex flex-col gap-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wide">
-              System Prompt
-            </span>
-            <textarea
-              value={systemPrompt}
-              onChange={(e) => setSystemPrompt(e.target.value)}
-              rows={3}
-              placeholder="You are a helpful assistant."
-              className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm resize-y focus:border-cyan-400 focus:outline-none"
-            />
-          </label>
 
           {/* Error */}
           {error && <p className="text-red-400 text-sm">{error}</p>}

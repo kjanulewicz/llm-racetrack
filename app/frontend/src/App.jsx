@@ -82,26 +82,27 @@ function AuthenticatedApp() {
       {/* System Prompt Editors */}
       <section className="mb-6 flex flex-col gap-2">
         {models.map((m) => (
-          <SystemPromptEditor
-            key={m.id}
-            modelLabel={m.label}
-            color={m.color}
-            value={prompts[m.id] || ""}
-            onChange={(v) => handlePromptChange(m.id, v)}
-          />
+          <div key={m.id} className="flex items-start gap-2">
+            <div className="flex-1">
+              <SystemPromptEditor
+                modelLabel={m.label}
+                color={m.color}
+                value={prompts[m.id] || ""}
+                onChange={(v) => handlePromptChange(m.id, v)}
+              />
+            </div>
+            <button
+              onClick={() => {
+                setActiveSlotId(m.id);
+                setDrawerOpen(true);
+              }}
+              className="text-xs text-cyan-400 hover:text-cyan-300 mt-1 transition-colors whitespace-nowrap"
+              title="Browse prompt templates"
+            >
+              Templates →
+            </button>
+          </div>
         ))}
-
-        {models.length > 0 && (
-          <button
-            onClick={() => {
-              setActiveSlotId(models[0]?.id);
-              setDrawerOpen(true);
-            }}
-            className="text-xs text-cyan-400 hover:text-cyan-300 self-start mt-1 transition-colors"
-          >
-            Browse prompt templates →
-          </button>
-        )}
       </section>
 
       {/* Add Model Modal */}
