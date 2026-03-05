@@ -14,8 +14,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config.loader import load_model_defaults, get_model_defaults
 from db.cosmos_client import init_cosmos, close_cosmos
+from routers import azure_resources as azure_resources_router
+from routers import history as history_router
 from routers import models as models_router
 from routers import race as race_router
+from routers import shares as shares_router
 from settings import get_settings
 
 
@@ -54,6 +57,9 @@ app.add_middleware(
 
 app.include_router(models_router.router)
 app.include_router(race_router.router)
+app.include_router(azure_resources_router.router)
+app.include_router(shares_router.router)
+app.include_router(history_router.router)
 
 
 # --------------------------------------------------------------------------
