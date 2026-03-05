@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import useModels from "../hooks/useModels";
 import useRace from "../hooks/useRace";
 import ModelSelector from "../components/ModelSelector";
@@ -12,23 +12,26 @@ import PromptTemplateDrawer from "../components/PromptTemplateDrawer";
  * Main race UI page — model selection, input panel, race results.
  */
 export default function RacePage() {
-  const { models, loading, refresh } = useModels();
+  const { models, refresh } = useModels();
   const { modelStates, raceId, status, startRace, reset } = useRace();
 
-  const [activeIds, setActiveIds] = useState([]);
+  // null means "use auto-selection", array means "user has explicitly chosen"
+  const [userActiveIds, setUserActiveIds] = useState(null);
   const [prompts, setPrompts] = useState({});
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeSlotId, setActiveSlotId] = useState(null);
 
-  // Auto-select first 2 models when loaded and none selected
-  if (models.length >= 2 && activeIds.length === 0 && !loading) {
-    setActiveIds(models.slice(0, 2).map((m) => m.id));
-  }
+  // Derive effective active IDs: auto-select first 2 until user interacts
+  const activeIds = useMemo(() => {
+    if (userActiveIds !== null) return userActiveIds;
+    if (models.length >= 2) return models.slice(0, 2).map((m) => m.id);
+    return models.map((m) => m.id);
+  }, [userActiveIds, models]);
 
   function handleRemoveModel(id) {
-    setActiveIds((prev) => prev.filter((x) => x !== id));
+    setUserActiveIds(activeIds.filter((x) => x !== id));
   }
 
   function handlePromptChange(id, value) {

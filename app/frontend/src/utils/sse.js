@@ -68,8 +68,8 @@ export function openSSEStream(url, body, onEvent, onDone, onError) {
               try {
                 const data = JSON.parse(raw);
                 onEvent({ event: currentEvent, data });
-              } catch {
-                onEvent({ event: currentEvent, data: { raw } });
+              } catch (parseError) {
+                onEvent({ event: currentEvent, data: { raw, parseError: parseError.message } });
               }
             }
             currentEvent = "message";

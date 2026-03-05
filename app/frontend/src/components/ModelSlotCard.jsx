@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+const PROVIDER_LABELS = {
+  azure_foundry: "Foundry",
+  azure_openai: "OpenAI",
+};
+
 /**
  * Single model slot card with x button, model label, endpoint badge,
  * system prompt preview, and expand button.
@@ -21,8 +26,7 @@ export default function ModelSlotCard({
 }) {
   const [expanded, setExpanded] = useState(false);
 
-  const providerLabel =
-    model.provider === "azure_foundry" ? "Foundry" : "OpenAI";
+  const providerLabel = PROVIDER_LABELS[model.provider] || model.provider;
 
   return (
     <div
