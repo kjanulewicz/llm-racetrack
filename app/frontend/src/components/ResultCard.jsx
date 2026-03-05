@@ -2,14 +2,14 @@ import TokenBadge from "./TokenBadge";
 import { formatDuration } from "../utils/formatting";
 
 const POSITION_LABELS = {
-  1: "🥇 1st",
-  2: "🥈 2nd",
-  3: "🥉 3rd",
-  4: "4th",
+  1: "1ST",
+  2: "2ND",
+  3: "3RD",
+  4: "4TH",
 };
 
 /**
- * Shown per model after done event.
+ * Shown per model after done event — arcade styled.
  * Displays response text, total elapsed time, TTFT, and token counts.
  *
  * @param {{
@@ -30,25 +30,42 @@ export default function ResultCard({
   const { text, elapsed_ms, ttft_ms, usage, status, finish_position } = state;
 
   const isError = status === "error";
+  const isWinner = finish_position === 1;
+  const borderColor = isError ? "#ef4444" : color;
 
   return (
     <div
-      className="flex flex-col bg-gray-800 border-2 rounded-lg overflow-hidden"
-      style={{ borderColor: isError ? "#ef4444" : color }}
+      className={`flex flex-col bg-[#0e0e24] border-2 overflow-hidden ${
+        !isWinner && finish_position ? "opacity-50" : ""
+      }`}
+      style={{
+        borderColor,
+        boxShadow: isWinner
+          ? `0 0 20px ${color}, 0 0 40px ${color}44`
+          : `0 0 8px ${borderColor}44`,
+      }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
+      <div className="flex items-center justify-between px-4 py-3 border-b-2 border-[#333366]">
         <div className="flex items-center gap-3">
           <span
-            className="inline-block w-3 h-3 rounded-full"
+            className="inline-block w-3 h-3"
             style={{ backgroundColor: color }}
           />
-          <span className="text-sm font-semibold" style={{ color }}>
+          <span
+            className="text-[10px] font-semibold uppercase"
+            style={{
+              color,
+              textShadow: `0 0 6px ${color}`,
+            }}
+          >
             {modelLabel}
           </span>
           {finish_position && (
-            <span className="text-xs text-gray-300">
-              {POSITION_LABELS[finish_position] || `${finish_position}th`}
+            <span
+              className={`text-[10px] ${isWinner ? "neon-yellow blink" : "text-gray-500"}`}
+            >
+              {POSITION_LABELS[finish_position] || `${finish_position}TH`}
             </span>
           )}
         </div>
@@ -56,7 +73,7 @@ export default function ResultCard({
         {raceId && onShare && (
           <button
             onClick={onShare}
-            className="text-xs text-cyan-400 hover:text-cyan-300 uppercase tracking-wider transition-colors"
+            className="text-[8px] neon-cyan uppercase tracking-wider transition-colors hover:opacity-80"
           >
             Share
           </button>
@@ -64,7 +81,7 @@ export default function ResultCard({
       </div>
 
       {/* Timing row */}
-      <div className="flex gap-4 px-4 py-2 text-xs text-gray-400">
+      <div className="flex gap-4 px-4 py-2 text-[8px] text-gray-500 uppercase">
         <span>
           Total:{" "}
           <span className="text-white">{formatDuration(elapsed_ms)}</span>
@@ -84,8 +101,8 @@ export default function ResultCard({
       {/* Response text */}
       <div className="px-4 pb-4">
         <pre
-          className={`text-sm whitespace-pre-wrap break-words max-h-64 overflow-y-auto ${
-            isError ? "text-red-400" : "text-gray-200"
+          className={`text-[10px] whitespace-pre-wrap break-words max-h-64 overflow-y-auto ${
+            isError ? "text-[#ff3cac]" : "text-gray-300"
           }`}
         >
           {text || (isError ? "Error occurred" : "No response")}

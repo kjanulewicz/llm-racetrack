@@ -12,11 +12,11 @@ import { formatDate } from "../utils/formatting";
  */
 export default function HistoryReplay({ race, loading, onBack }) {
   if (loading) {
-    return <p className="text-gray-500 text-sm">Loading race data…</p>;
+    return <p className="text-[10px] text-gray-600">Loading race data…</p>;
   }
 
   if (!race) {
-    return <p className="text-gray-500 text-sm">Race not found.</p>;
+    return <p className="text-[10px] text-gray-600">Race not found.</p>;
   }
 
   return (
@@ -24,20 +24,20 @@ export default function HistoryReplay({ race, loading, onBack }) {
       <div className="flex items-center gap-3">
         <button
           onClick={onBack}
-          className="text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
+          className="text-[10px] neon-cyan transition-colors hover:opacity-80 uppercase"
         >
           ← Back to list
         </button>
-        <span className="text-xs text-gray-500">
+        <span className="text-[8px] text-gray-600">
           {formatDate(race.created_at)}
         </span>
       </div>
 
-      <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-        <span className="text-xs text-gray-400 uppercase tracking-wide">
+      <div className="p-4 bg-[#0e0e24] border-2 border-[#333366]">
+        <span className="text-[8px] text-gray-500 uppercase tracking-wider">
           User Prompt
         </span>
-        <p className="text-sm text-white mt-1">{race.user_input}</p>
+        <p className="text-[10px] text-white mt-1">{race.user_input}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

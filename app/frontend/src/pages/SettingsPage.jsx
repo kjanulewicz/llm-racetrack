@@ -20,20 +20,20 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-bold text-cyan-400 uppercase tracking-wider">
+      <h2 className="text-sm neon-cyan neon-flicker uppercase tracking-wider">
         Settings
       </h2>
 
       {/* Tab bar */}
-      <div className="flex gap-1 border-b border-gray-700">
+      <div className="flex gap-1 border-b-2 border-[#333366]">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 text-sm uppercase tracking-wide transition-colors border-b-2 ${
+            className={`px-4 py-2 text-[10px] uppercase tracking-wider transition-colors border-b-2 ${
               activeTab === tab.key
-                ? "border-cyan-400 text-cyan-400"
-                : "border-transparent text-gray-400 hover:text-white"
+                ? "border-[#3cf] text-[#3cf]"
+                : "border-transparent text-gray-600 hover:text-white"
             }`}
           >
             {tab.label}
@@ -67,11 +67,11 @@ function ModelsTab() {
   }
 
   if (loading) {
-    return <p className="text-gray-500 text-sm">Loading models…</p>;
+    return <p className="text-[10px] text-gray-600">Loading models…</p>;
   }
 
   if (userModels.length === 0) {
-    return <p className="text-gray-500 text-sm">No saved models.</p>;
+    return <p className="text-[10px] text-gray-600">No saved models.</p>;
   }
 
   return (
@@ -79,22 +79,22 @@ function ModelsTab() {
       {userModels.map((m) => (
         <div
           key={m.id}
-          className="flex items-center justify-between p-3 bg-gray-800 border border-gray-700 rounded-lg"
+          className="flex items-center justify-between p-3 bg-[#0e0e24] border-2 border-[#333366]"
         >
           <div className="flex items-center gap-3">
             <span
-              className="inline-block w-3 h-3 rounded-full"
+              className="inline-block w-3 h-3"
               style={{ backgroundColor: m.color }}
             />
             <div>
-              <p className="text-sm text-white font-medium">{m.label}</p>
-              <p className="text-xs text-gray-400">{m.provider}</p>
+              <p className="text-[10px] text-white uppercase">{m.label}</p>
+              <p className="text-[8px] text-gray-600">{m.provider}</p>
             </div>
           </div>
           <button
             onClick={() => handleDelete(m.id)}
             disabled={deleting === m.id}
-            className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50 transition-colors"
+            className="text-[8px] text-[#ff3cac] hover:opacity-80 disabled:opacity-50 transition-colors uppercase"
           >
             {deleting === m.id ? "Deleting…" : "Delete"}
           </button>
@@ -123,11 +123,11 @@ function TemplatesTab() {
   }
 
   if (loading) {
-    return <p className="text-gray-500 text-sm">Loading templates…</p>;
+    return <p className="text-[10px] text-gray-600">Loading templates…</p>;
   }
 
   if (templates.length === 0) {
-    return <p className="text-gray-500 text-sm">No saved templates.</p>;
+    return <p className="text-[10px] text-gray-600">No saved templates.</p>;
   }
 
   return (
@@ -135,18 +135,18 @@ function TemplatesTab() {
       {templates.map((t) => (
         <div
           key={t.id}
-          className="flex items-center justify-between p-3 bg-gray-800 border border-gray-700 rounded-lg"
+          className="flex items-center justify-between p-3 bg-[#0e0e24] border-2 border-[#333366]"
         >
           <div>
-            <p className="text-sm text-white font-medium">{t.name}</p>
-            <p className="text-xs text-gray-400 truncate max-w-md">
+            <p className="text-[10px] text-white uppercase">{t.name}</p>
+            <p className="text-[8px] text-gray-600 truncate max-w-md">
               {t.content}
             </p>
           </div>
           <button
             onClick={() => handleDelete(t.id)}
             disabled={deleting === t.id}
-            className="text-xs text-red-400 hover:text-red-300 disabled:opacity-50 transition-colors"
+            className="text-[8px] text-[#ff3cac] hover:opacity-80 disabled:opacity-50 transition-colors uppercase"
           >
             {deleting === t.id ? "Deleting…" : "Delete"}
           </button>
@@ -211,10 +211,10 @@ function PreferencesTab() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h3 className="text-sm text-gray-400 uppercase tracking-wide mb-2">
+        <h3 className="text-[10px] text-gray-500 uppercase tracking-wider mb-2">
           Default Model Selection
         </h3>
-        <p className="text-xs text-gray-500 mb-3">
+        <p className="text-[8px] text-gray-600 mb-3">
           Select which models should be pre-selected when starting a new race.
         </p>
 
@@ -222,33 +222,35 @@ function PreferencesTab() {
           {models.map((m) => (
             <label
               key={m.id}
-              className="flex items-center gap-3 p-2 bg-gray-800 rounded cursor-pointer hover:bg-gray-750"
+              className="flex items-center gap-3 p-2 bg-[#0e0e24] cursor-pointer hover:bg-[#12123a] border-2 border-[#333366]"
             >
               <input
                 type="checkbox"
                 checked={defaults.includes(m.id)}
                 onChange={() => toggleModel(m.id)}
-                className="accent-cyan-400"
+                className="accent-[#3cf]"
               />
               <span
-                className="inline-block w-2 h-2 rounded-full"
+                className="inline-block w-2 h-2"
                 style={{ backgroundColor: m.color }}
               />
-              <span className="text-sm text-white">{m.label}</span>
+              <span className="text-[10px] text-white uppercase">
+                {m.label}
+              </span>
             </label>
           ))}
         </div>
       </div>
 
-      {error && <p className="text-red-400 text-sm">{error}</p>}
+      {error && <p className="text-[10px] text-[#ff3cac]">{error}</p>}
       {saved && (
-        <p className="text-green-400 text-sm">Preferences saved!</p>
+        <p className="text-[10px] neon-green">Preferences saved!</p>
       )}
 
       <button
         onClick={handleSave}
         disabled={saving}
-        className="self-start px-4 py-2 text-sm text-gray-900 bg-cyan-400 rounded font-semibold hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="self-start px-4 py-2 text-[10px] font-bold bg-[#0a0a1a] text-[#3cf] pixel-border-cyan uppercase tracking-wider hover:bg-[#3cf] hover:text-[#0a0a1a] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {saving ? "Saving…" : "Save Preferences"}
       </button>

@@ -17,10 +17,10 @@ export default function SystemPromptEditor({
     <div className="flex flex-col gap-1">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="flex items-center gap-2 text-xs uppercase tracking-wide text-gray-400 hover:text-white transition-colors"
+        className="flex items-center gap-2 text-[8px] uppercase tracking-wider text-gray-500 hover:text-white transition-colors"
       >
         <span
-          className="inline-block w-2 h-2 rounded-full"
+          className="inline-block w-2 h-2"
           style={{ backgroundColor: color }}
         />
         <span>System Prompt — {modelLabel}</span>
@@ -33,12 +33,12 @@ export default function SystemPromptEditor({
           onChange={(e) => onChange(e.target.value)}
           rows={4}
           placeholder="Enter system prompt…"
-          className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm resize-y focus:border-cyan-400 focus:outline-none"
+          className="bg-[#0a0a1a] border-2 border-[#333366] text-white px-3 py-2 text-[10px] resize-y focus:border-[#3cf] focus:outline-none"
         />
       )}
 
       {!expanded && value && (
-        <p className="text-xs text-gray-500 truncate pl-4">{value}</p>
+        <p className="text-[8px] text-gray-600 truncate pl-4">{value}</p>
       )}
     </div>
   );

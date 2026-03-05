@@ -6,7 +6,8 @@ const PROVIDER_LABELS = {
 };
 
 /**
- * Single model slot card with x button, model label, endpoint badge,
+ * Single model slot card — arcade "player select" style with pixel border glow
+ * in model neon color, x button, model label, endpoint badge,
  * system prompt preview, and expand button.
  *
  * @param {{
@@ -27,22 +28,29 @@ export default function ModelSlotCard({
   const [expanded, setExpanded] = useState(false);
 
   const providerLabel = PROVIDER_LABELS[model.provider] || model.provider;
+  const color = model.color || "#3cf";
 
   return (
     <div
-      className="flex flex-col bg-gray-800 border-2 rounded-lg overflow-hidden min-w-[220px] max-w-[280px]"
-      style={{ borderColor: model.color }}
+      className="flex flex-col bg-[#0e0e24] border-2 overflow-hidden min-w-[220px] max-w-[280px]"
+      style={{
+        borderColor: color,
+        boxShadow: `0 0 12px ${color}, inset 0 0 8px rgba(0,0,0,0.3)`,
+      }}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-3 py-2">
         <div className="flex items-center gap-2 min-w-0">
           <span
-            className="inline-block w-2 h-2 rounded-full shrink-0"
-            style={{ backgroundColor: model.color }}
+            className="inline-block w-2 h-2 shrink-0"
+            style={{ backgroundColor: color }}
           />
           <span
-            className="text-sm font-semibold truncate"
-            style={{ color: model.color }}
+            className="text-[10px] font-semibold truncate uppercase neon-flicker"
+            style={{
+              color,
+              textShadow: `0 0 6px ${color}`,
+            }}
           >
             {model.label}
           </span>
@@ -50,7 +58,7 @@ export default function ModelSlotCard({
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => setExpanded(!expanded)}
-            className="text-gray-400 hover:text-white text-xs px-1 transition-colors"
+            className="text-gray-500 hover:text-white text-[10px] px-1 transition-colors"
             title={expanded ? "Collapse" : "Expand"}
           >
             {expanded ? "▲" : "▼"}
@@ -58,7 +66,7 @@ export default function ModelSlotCard({
           {canRemove && (
             <button
               onClick={onRemove}
-              className="text-gray-400 hover:text-red-400 text-sm px-1 transition-colors"
+              className="text-gray-500 hover:text-[#ff3cac] text-[10px] px-1 transition-colors"
               title="Remove model"
             >
               ✕
@@ -69,12 +77,12 @@ export default function ModelSlotCard({
 
       {/* Badge row */}
       <div className="px-3 pb-2 flex items-center gap-2">
-        <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-gray-700 text-gray-300">
+        <span className="text-[8px] uppercase tracking-wider px-2 py-0.5 bg-[#1a1a3e] text-gray-400 border border-[#333366]">
           {providerLabel}
         </span>
         {model.endpoint_url && (
           <span
-            className="text-[10px] text-gray-500 truncate max-w-[140px]"
+            className="text-[8px] text-gray-600 truncate max-w-[140px]"
             title={model.endpoint_url}
           >
             {model.endpoint_url}
@@ -85,7 +93,7 @@ export default function ModelSlotCard({
       {/* System prompt preview / editor */}
       {!expanded && systemPrompt && (
         <div className="px-3 pb-2">
-          <p className="text-xs text-gray-500 truncate">{systemPrompt}</p>
+          <p className="text-[8px] text-gray-500 truncate">{systemPrompt}</p>
         </div>
       )}
 
@@ -96,7 +104,7 @@ export default function ModelSlotCard({
             onChange={(e) => onPromptChange(e.target.value)}
             rows={3}
             placeholder="Enter system prompt…"
-            className="w-full bg-gray-900 border border-gray-600 text-white rounded px-2 py-1 text-xs resize-y focus:border-cyan-400 focus:outline-none"
+            className="w-full bg-[#0a0a1a] border-2 border-[#333366] text-white px-2 py-1 text-[10px] resize-y focus:border-[#3cf] focus:outline-none"
           />
         </div>
       )}

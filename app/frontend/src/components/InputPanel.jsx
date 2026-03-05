@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 /**
- * Textarea for user input and START RACE button.
+ * Textarea for user input and START RACE button — arcade styled.
  * Button is disabled until >= 2 models are selected and input is non-empty.
  *
  * @param {{
@@ -37,8 +37,8 @@ export default function InputPanel({
   return (
     <div className="flex flex-col gap-3">
       <label className="flex flex-col gap-1">
-        <span className="text-xs text-gray-400 uppercase tracking-wide">
-          User Prompt
+        <span className="text-[8px] text-gray-500 uppercase tracking-wider">
+          {">"} Your Prompt
         </span>
         <textarea
           value={input}
@@ -47,7 +47,8 @@ export default function InputPanel({
           rows={4}
           placeholder="Enter your prompt here…"
           disabled={raceStatus === "running"}
-          className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm resize-y focus:border-cyan-400 focus:outline-none disabled:opacity-50"
+          className="bg-[#0e0e24] border-2 border-[#333366] text-white px-3 py-2 text-[10px] resize-y focus:border-[#3cf] focus:outline-none disabled:opacity-50"
+          style={{ fontFamily: '"Press Start 2P", monospace' }}
         />
       </label>
 
@@ -55,13 +56,13 @@ export default function InputPanel({
         <button
           onClick={handleStart}
           disabled={!canStart}
-          className="px-6 py-3 text-sm font-bold text-gray-900 bg-cyan-400 rounded uppercase tracking-wider hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-3 text-[10px] font-bold bg-[#0a0a1a] text-[#00ff88] uppercase tracking-wider pixel-border-green hover:bg-[#00ff88] hover:text-[#0a0a1a] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           {raceStatus === "running" ? "Racing…" : "Start Race"}
         </button>
 
         {activeModelCount < 2 && (
-          <span className="text-xs text-gray-500">
+          <span className="text-[8px] text-gray-600 uppercase">
             Select at least 2 models to start
           </span>
         )}

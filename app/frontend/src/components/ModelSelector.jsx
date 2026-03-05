@@ -4,7 +4,7 @@ const MIN_SLOTS = 2;
 const MAX_SLOTS = 4;
 
 /**
- * Horizontal slot row with x / + controls.
+ * Horizontal slot row — arcade "player select" layout.
  * Enforces min 2 / max 4 active slots.
  * Opens AddModelModal on + click.
  *
@@ -33,8 +33,8 @@ export default function ModelSelector({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm text-gray-400 uppercase tracking-wide">
-          Model Slots ({activeIds.length}/{MAX_SLOTS})
+        <h2 className="text-[10px] text-gray-500 uppercase tracking-wider">
+          Player Select ({activeIds.length}/{MAX_SLOTS})
         </h2>
       </div>
 
@@ -53,7 +53,7 @@ export default function ModelSelector({
         {canAdd && (
           <button
             onClick={onAddClick}
-            className="flex items-center justify-center min-w-[220px] h-[100px] border-2 border-dashed border-gray-600 text-gray-400 rounded-lg hover:border-cyan-400 hover:text-cyan-400 text-sm transition-colors"
+            className="flex items-center justify-center min-w-[220px] h-[100px] border-2 border-dashed border-[#333366] text-gray-600 hover:border-[#3cf] hover:text-[#3cf] text-[10px] uppercase tracking-wider transition-colors"
           >
             + Add Model
           </button>

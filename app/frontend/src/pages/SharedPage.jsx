@@ -60,11 +60,11 @@ export default function SharedPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-bold text-cyan-400 uppercase tracking-wider">
+      <h2 className="text-sm neon-cyan neon-flicker uppercase tracking-wider">
         Shared with Me
       </h2>
 
-      {error && <p className="text-red-400 text-sm">{error}</p>}
+      {error && <p className="text-[10px] text-[#ff3cac]">{error}</p>}
 
       {selectedId ? (
         <HistoryReplay
