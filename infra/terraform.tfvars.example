@@ -1,0 +1,26 @@
+# Azure AD tenant ID
+tenant_id = ""
+
+# Azure subscription ID
+subscription_id = ""
+
+# Name for the Resource Group that Terraform will create
+resource_group_name = ""
+
+# Azure region (default: West Europe)
+location = "West Europe"
+
+# Base name used to derive resource names (default: llm-racetrack)
+app_name = "llm-racetrack"
+
+# Entra ID App Registration client ID (created manually in the Azure Portal)
+entra_client_id = ""
+
+# Cosmos DB SQL database name (default: llm-racetrack-db)
+cosmos_db_name = "llm-racetrack-db"
+
+# Resource IDs of Azure OpenAI accounts the Managed Identity should access
+openai_resource_ids = []
+
+# Static Web App URL — set after first deploy
+frontend_origin = ""
