@@ -13,7 +13,6 @@ import httpx
 from fastapi import HTTPException, status
 
 from auth.credentials import get_azure_credential
-from settings import get_settings
 
 logger = logging.getLogger(__name__)
 
@@ -81,13 +80,9 @@ async def resolve_email_to_oid(email: str, user_token: str) -> str:
                 detail="Recipient not found in the organisation",
             )
 
-        # Validate same tenant — the Graph API scoped to our tenant only
-        # returns users in our directory, but we verify explicitly if
-        # the tenant ID is present in the response.
-        settings = get_settings()
-        on_premises_domain = resolved_user.get("onPremisesDomainName", "")
-        # If Graph returns the user from our directory, they are same-tenant.
-        # The /users endpoint scoped to our Managed Identity's tenant only
-        # returns users within that tenant, so finding the user is sufficient.
+        # Same-tenant validation: the Graph API token is scoped to our
+        # tenant via DefaultAzureCredential, so the /users endpoint only
+        # returns users within our directory.  Finding the user is
+        # sufficient proof they belong to the same tenant.
 
     return recipient_oid
