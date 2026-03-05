@@ -7,6 +7,7 @@ import SharedPage from "./pages/SharedPage";
 import SettingsPage from "./pages/SettingsPage";
 import SettingsDrawer from "./components/SettingsDrawer";
 import useModels from "./hooks/useModels";
+import useAuth from "./auth/useAuth";
 
 const DEV_MODE = import.meta.env.VITE_DEV_MODE === "true";
 
@@ -19,7 +20,7 @@ const NAV_ITEMS = [
 
 function App() {
   if (DEV_MODE) {
-    return <AppShell userName="Local Developer" onLogout={null} />;
+    return <AppShell />;
   }
 
   return <MsalGatedApp />;
@@ -51,22 +52,15 @@ function MsalGatedApp() {
     );
   }
 
-  return <MsalAuthenticatedApp />;
+  return <AppShell />;
 }
 
-function MsalAuthenticatedApp() {
-  const { instance, accounts } = useMsal();
-  const userName = accounts?.[0]?.name || accounts?.[0]?.username || "";
-
-  return (
-    <AppShell userName={userName} onLogout={() => instance.logoutRedirect()} />
-  );
-}
-
-function AppShell({ userName, onLogout }) {
+function AppShell() {
   const [page, setPage] = useState("race");
   const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
+  const { user, logout } = useAuth();
   const { models, refresh: refreshModels } = useModels();
+  const userName = user?.name || user?.username || "";
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white p-4 md:p-6">
@@ -102,9 +96,9 @@ function AppShell({ userName, onLogout }) {
               {userName}
             </span>
           )}
-          {onLogout && (
+          {!DEV_MODE && (
             <button
-              onClick={onLogout}
+              onClick={logout}
               className="px-2 py-1.5 text-[8px] uppercase tracking-wide text-gray-600 hover:text-[#ff3cac] transition-colors pixel-border-pink"
               style={{ borderColor: "transparent", boxShadow: "none" }}
               onMouseEnter={(e) => {
