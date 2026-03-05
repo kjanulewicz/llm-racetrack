@@ -1,6 +1,8 @@
 import { msalInstance } from "../auth/msalInstance";
 import { loginRequest } from "../auth/msal.config";
 
+const DEV_MODE = import.meta.env.VITE_DEV_MODE === "true";
+
 /**
  * Opens a POST-based SSE stream with Bearer token authentication.
  * Returns an object with an `abort()` method and iterates over parsed
@@ -21,13 +23,15 @@ export function openSSEStream(url, body, onEvent, onDone, onError) {
   (async () => {
     try {
       let token = "";
-      const accounts = msalInstance.getAllAccounts();
-      if (accounts.length > 0) {
-        const response = await msalInstance.acquireTokenSilent({
-          ...loginRequest,
-          account: accounts[0],
-        });
-        token = response.accessToken;
+      if (!DEV_MODE) {
+        const accounts = msalInstance.getAllAccounts();
+        if (accounts.length > 0) {
+          const response = await msalInstance.acquireTokenSilent({
+            ...loginRequest,
+            account: accounts[0],
+          });
+          token = response.accessToken;
+        }
       }
 
       const res = await fetch(url, {

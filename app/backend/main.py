@@ -6,6 +6,7 @@ This module creates the FastAPI application with CORS, lifespan hooks
 
 from __future__ import annotations
 
+import logging
 from contextlib import asynccontextmanager
 from typing import AsyncIterator
 
@@ -21,11 +22,22 @@ from routers import race as race_router
 from routers import shares as shares_router
 from settings import get_settings
 
+logger = logging.getLogger(__name__)
+
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
     """Startup / shutdown lifecycle hook."""
     # Startup ------------------------------------------------------------------
+    _settings = get_settings()
+    if _settings.DEV_MODE and _settings.ENVIRONMENT != "local":
+        raise RuntimeError(
+            "DEV_MODE=True is only allowed when ENVIRONMENT=local"
+        )
+    if _settings.DEV_MODE:
+        logger.warning(
+            "DEV_MODE enabled — auth bypassed, do not use in production"
+        )
     load_model_defaults()
     await init_cosmos()
     # --------------------------------------------------------------------------

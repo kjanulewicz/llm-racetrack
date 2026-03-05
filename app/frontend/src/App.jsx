@@ -7,6 +7,9 @@ import SharedPage from "./pages/SharedPage";
 import SettingsPage from "./pages/SettingsPage";
 import SettingsDrawer from "./components/SettingsDrawer";
 import useModels from "./hooks/useModels";
+import useAuth from "./auth/useAuth";
+
+const DEV_MODE = import.meta.env.VITE_DEV_MODE === "true";
 
 const NAV_ITEMS = [
   { key: "race", label: "Race" },
@@ -16,6 +19,17 @@ const NAV_ITEMS = [
 ];
 
 function App() {
+  if (DEV_MODE) {
+    return <AppShell />;
+  }
+
+  return <MsalGatedApp />;
+}
+
+/**
+ * Standard MSAL-gated entry — shown only when DEV_MODE is off.
+ */
+function MsalGatedApp() {
   const isAuthenticated = useIsAuthenticated();
   const { instance } = useMsal();
 
@@ -38,15 +52,15 @@ function App() {
     );
   }
 
-  return <AuthenticatedApp />;
+  return <AppShell />;
 }
 
-function AuthenticatedApp() {
+function AppShell() {
   const [page, setPage] = useState("race");
   const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
-  const { instance, accounts } = useMsal();
+  const { user, logout } = useAuth();
   const { models, refresh: refreshModels } = useModels();
-  const userName = accounts?.[0]?.name || accounts?.[0]?.username || "";
+  const userName = user?.name || user?.username || "";
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white p-4 md:p-6">
@@ -82,22 +96,24 @@ function AuthenticatedApp() {
               {userName}
             </span>
           )}
-          <button
-            onClick={() => instance.logoutRedirect()}
-            className="px-2 py-1.5 text-[8px] uppercase tracking-wide text-gray-600 hover:text-[#ff3cac] transition-colors pixel-border-pink"
-            style={{ borderColor: "transparent", boxShadow: "none" }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "#ff3cac";
-              e.currentTarget.style.boxShadow =
-                "0 0 12px #ff3cac, inset 0 0 8px rgba(0,0,0,0.3)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.boxShadow = "none";
-            }}
-          >
-            Logout
-          </button>
+          {!DEV_MODE && (
+            <button
+              onClick={logout}
+              className="px-2 py-1.5 text-[8px] uppercase tracking-wide text-gray-600 hover:text-[#ff3cac] transition-colors pixel-border-pink"
+              style={{ borderColor: "transparent", boxShadow: "none" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = "#ff3cac";
+                e.currentTarget.style.boxShadow =
+                  "0 0 12px #ff3cac, inset 0 0 8px rgba(0,0,0,0.3)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = "transparent";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              Logout
+            </button>
+          )}
         </div>
       </header>
 
