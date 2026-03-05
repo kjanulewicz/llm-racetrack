@@ -146,3 +146,9 @@ class ModelConfigCreate(BaseModel):
     subscription_id: Optional[str] = None
     resource_group: Optional[str] = None
     color: str = "#38bdf8"
+
+
+class ShareRequest(BaseModel):
+    """POST /race/{id}/share request body."""
+
+    recipient_email: str
