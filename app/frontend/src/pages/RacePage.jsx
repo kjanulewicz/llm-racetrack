@@ -121,21 +121,23 @@ export default function RacePage() {
         raceStatus={status}
       />
 
-      {/* Race Track — Three.js canvas */}
+      {/* Race Track — Three.js canvas (responsive container) */}
       {(status === "running" || status === "done") && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 race-layout">
           <h2 className="text-[10px] text-gray-500 uppercase tracking-wider">
             Race Track
           </h2>
-          <RaceTrack
-            models={activeModels}
-            modelStates={modelStates}
-            raceStatus={status}
-          />
+          <div className="race-track-container">
+            <RaceTrack
+              models={activeModels}
+              modelStates={modelStates}
+              raceStatus={status}
+            />
+          </div>
         </div>
       )}
 
-      {/* Race Results */}
+      {/* Race Results — responsive grid */}
       {status === "done" && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
@@ -150,7 +152,7 @@ export default function RacePage() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="results-grid">
             {activeModels.map((m) => {
               const state = modelStates[m.id];
               if (!state) return null;
@@ -169,13 +171,13 @@ export default function RacePage() {
         </div>
       )}
 
-      {/* Running state — streaming text */}
+      {/* Running state — streaming text (responsive grid) */}
       {status === "running" && (
         <div className="flex flex-col gap-4">
           <h2 className="text-[10px] text-gray-500 uppercase tracking-wider neon-flicker">
             Racing…
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="results-grid">
             {activeModels.map((m) => {
               const state = modelStates[m.id];
               if (!state) return null;
@@ -184,20 +186,28 @@ export default function RacePage() {
                   key={m.id}
                   className="p-4 bg-[#0e0e24] border-2 overflow-hidden"
                   style={{
-                    borderColor: m.color,
-                    boxShadow: `0 0 12px ${m.color}33`,
+                    borderColor: state.status === "error" ? "#ef4444" : m.color,
+                    boxShadow: state.status === "error"
+                      ? "0 0 12px #ef444433"
+                      : `0 0 12px ${m.color}33`,
                   }}
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <span
                       className="inline-block w-2 h-2"
-                      style={{ backgroundColor: m.color }}
+                      style={{
+                        backgroundColor: state.status === "error" ? "#ef4444" : m.color,
+                      }}
                     />
                     <span
-                      className="text-[10px] font-semibold uppercase"
+                      className={`text-[10px] font-semibold uppercase ${
+                        state.status === "error" ? "error-flicker" : ""
+                      }`}
                       style={{
-                        color: m.color,
-                        textShadow: `0 0 6px ${m.color}`,
+                        color: state.status === "error" ? "#ef4444" : m.color,
+                        textShadow: state.status === "error"
+                          ? "0 0 6px #ef4444"
+                          : `0 0 6px ${m.color}`,
                       }}
                     >
                       {m.label}
@@ -205,11 +215,17 @@ export default function RacePage() {
                     <span className="text-[8px] text-gray-500 uppercase">
                       {state.status === "running"
                         ? "Streaming…"
+                        : state.status === "error"
+                        ? "Crashed!"
                         : state.status}
                     </span>
                   </div>
-                  <pre className="text-[10px] text-gray-300 whitespace-pre-wrap break-words max-h-48 overflow-y-auto">
-                    {state.text || "Waiting…"}
+                  <pre
+                    className={`text-[10px] whitespace-pre-wrap break-words max-h-48 overflow-y-auto ${
+                      state.status === "error" ? "text-[#ff3cac]" : "text-gray-300"
+                    }`}
+                  >
+                    {state.text || (state.status === "error" ? "Error occurred" : "Waiting…")}
                   </pre>
                 </div>
               );

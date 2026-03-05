@@ -40,7 +40,7 @@ export default function HistoryReplay({ race, loading, onBack }) {
         <p className="text-[10px] text-white mt-1">{race.user_input}</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="results-grid">
         {(race.results || []).map((r) => (
           <ResultCard
             key={r.model_config_id}
