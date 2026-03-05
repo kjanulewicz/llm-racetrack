@@ -11,6 +11,8 @@ const CAR_HEIGHT = 20;
 const FINISH_LINE_WIDTH = 16;
 /** Default ceiling for progress animation (section 9.2 of the brief). */
 const ESTIMATED_CEILING_MS = 20000;
+/** Error cars freeze at this fraction of MAX_ANIMATED_PROGRESS. */
+const ERROR_STATE_PROGRESS_CAP = 0.7;
 /** Cars animate up to this fraction before the done event snaps them to 1.0. */
 const MAX_ANIMATED_PROGRESS = 0.95;
 
@@ -241,7 +243,7 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
         // Freeze at current position when error occurs
         if (!raceStartTimeRef.current) return 0;
         const elapsed = performance.now() - raceStartTimeRef.current;
-        return Math.min(elapsed / ESTIMATED_CEILING_MS, MAX_ANIMATED_PROGRESS * 0.7);
+        return Math.min(elapsed / ESTIMATED_CEILING_MS, MAX_ANIMATED_PROGRESS * ERROR_STATE_PROGRESS_CAP);
       }
       if (state.status !== "running") return 0;
       if (!raceStartTimeRef.current) return 0;

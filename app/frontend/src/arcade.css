@@ -202,6 +202,7 @@ input, textarea, select, pre, code {
 }
 
 /* ---- Error state animations ---- */
+/* Flicker timing mirrors neon-flicker but faster and in red for urgency */
 @keyframes error-flicker {
   0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; color: #ef4444; text-shadow: 0 0 8px #ef4444; }
   20%, 24%, 55% { opacity: 0.4; color: #ff6b6b; text-shadow: 0 0 4px #ff6b6b; }

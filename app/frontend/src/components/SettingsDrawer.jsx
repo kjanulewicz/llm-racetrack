@@ -65,7 +65,7 @@ export default function SettingsDrawer({ open, onClose, models, onSettingsChange
       ...settings,
       visibility: {
         ...settings.visibility,
-        [id]: !settings.visibility[id],
+        [id]: settings.visibility[id] === false ? true : false,
       },
     };
     persist(next);
