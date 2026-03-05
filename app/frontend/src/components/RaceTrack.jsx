@@ -11,6 +11,8 @@ const CAR_HEIGHT = 20;
 const FINISH_LINE_WIDTH = 16;
 /** Default ceiling for progress animation (section 9.2 of the brief). */
 const ESTIMATED_CEILING_MS = 20000;
+/** Error cars freeze at this fraction of MAX_ANIMATED_PROGRESS. */
+const ERROR_STATE_PROGRESS_CAP = 0.7;
 /** Cars animate up to this fraction before the done event snaps them to 1.0. */
 const MAX_ANIMATED_PROGRESS = 0.95;
 
@@ -122,6 +124,51 @@ function createConfetti(scene, x, y) {
   return { points, velocities, age: 0 };
 }
 
+/**
+ * Creates a pixel smoke particle system at a given position.
+ */
+function createSmoke(scene, x, y) {
+  const count = 12;
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const velocities = [];
+
+  for (let i = 0; i < count; i++) {
+    positions[i * 3] = x + (Math.random() - 0.5) * 10;
+    positions[i * 3 + 1] = y + (Math.random() - 0.5) * 6;
+    positions[i * 3 + 2] = 0;
+
+    // Grey/red smoke colors
+    const grey = 0.3 + Math.random() * 0.3;
+    const isRed = Math.random() > 0.5;
+    colors[i * 3] = isRed ? 0.8 : grey;
+    colors[i * 3 + 1] = isRed ? 0.15 : grey;
+    colors[i * 3 + 2] = isRed ? 0.1 : grey;
+
+    velocities.push({
+      vx: (Math.random() - 0.5) * 1.5,
+      vy: Math.random() * 2 + 0.5,
+    });
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+  const material = new THREE.PointsMaterial({
+    size: 6,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.7,
+    depthTest: false,
+  });
+
+  const points = new THREE.Points(geometry, material);
+  scene.add(points);
+
+  return { points, velocities, age: 0 };
+}
+
 const POSITION_LABELS = { 1: "1ST", 2: "2ND", 3: "3RD", 4: "4TH" };
 
 /**
@@ -143,6 +190,7 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
   const carsRef = useRef([]);
   const lightsRef = useRef([]);
   const confettiRef = useRef([]);
+  const smokeRef = useRef([]);
   const animFrameRef = useRef(null);
   const raceStartTimeRef = useRef(null);
   const timerEls = useRef({});
@@ -191,6 +239,12 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
       const state = modelStates[modelId];
       if (!state) return 0;
       if (state.status === "done") return 1.0;
+      if (state.status === "error") {
+        // Freeze at current position when error occurs
+        if (!raceStartTimeRef.current) return 0;
+        const elapsed = performance.now() - raceStartTimeRef.current;
+        return Math.min(elapsed / ESTIMATED_CEILING_MS, MAX_ANIMATED_PROGRESS * ERROR_STATE_PROGRESS_CAP);
+      }
       if (state.status !== "running") return 0;
       if (!raceStartTimeRef.current) return 0;
       const elapsed = performance.now() - raceStartTimeRef.current;
@@ -247,9 +301,11 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
     for (const car of carsRef.current) scene.remove(car);
     for (const light of lightsRef.current) scene.remove(light);
     for (const c of confettiRef.current) scene.remove(c.points);
+    for (const s of smokeRef.current) scene.remove(s.points);
     carsRef.current = [];
     lightsRef.current = [];
     confettiRef.current = [];
+    smokeRef.current = [];
 
     // Remove old finish line and lane separators
     const toRemove = scene.children.filter(
@@ -336,6 +392,7 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
     if (!renderer || !scene || !camera) return;
 
     const doneSet = new Set();
+    const errorSet = new Set();
 
     function animate() {
       animFrameRef.current = requestAnimationFrame(animate);
@@ -357,6 +414,26 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
           car.position.y = car.userData.baseY;
         }
 
+        // Handle error state — turn car red, stop, show smoke
+        if (state && state.status === "error" && !errorSet.has(modelId)) {
+          errorSet.add(modelId);
+
+          // Replace car texture with red crashed version
+          const redTex = createCarTexture("#ef4444");
+          car.material.map = redTex;
+          car.material.needsUpdate = true;
+          car.material.opacity = 0.8;
+
+          // Update underglow to red
+          if (lightsRef.current[i]) {
+            lightsRef.current[i].color.set("#ef4444");
+          }
+
+          // Create pixel smoke effect
+          const smoke = createSmoke(scene, x, car.userData.baseY);
+          smokeRef.current.push(smoke);
+        }
+
         // Update underglow light position
         if (lightsRef.current[i]) {
           lightsRef.current[i].position.x = x;
@@ -365,7 +442,9 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
 
         // Grey out non-winners when all done
         if (raceStatus === "done" && state) {
-          if (state.finish_position === 1) {
+          if (state.status === "error") {
+            car.material.opacity = 0.5;
+          } else if (state.finish_position === 1) {
             car.material.opacity = 1.0;
           } else {
             car.material.opacity = 0.4;
@@ -394,6 +473,28 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
         }
         posAttr.needsUpdate = true;
         c.points.material.opacity = Math.max(0, 1 - c.age * 1.5);
+      });
+
+      // Update smoke particles (rising, fading)
+      smokeRef.current.forEach((s) => {
+        s.age += 0.016;
+        const posAttr = s.points.geometry.getAttribute("position");
+        for (let j = 0; j < posAttr.count; j++) {
+          posAttr.array[j * 3] += s.velocities[j].vx * 0.3;
+          posAttr.array[j * 3 + 1] += s.velocities[j].vy * 0.5;
+        }
+        posAttr.needsUpdate = true;
+        // Cycle opacity for continuous smoke effect
+        const cycle = (s.age % 2) / 2;
+        s.points.material.opacity = Math.max(0.1, 0.7 - cycle * 0.6);
+        // Reset particles when faded
+        if (cycle > 0.9) {
+          for (let j = 0; j < posAttr.count; j++) {
+            posAttr.array[j * 3] = posAttr.array[j * 3] + (Math.random() - 0.5) * 4;
+            posAttr.array[j * 3 + 1] = posAttr.array[j * 3 + 1] - 10;
+          }
+          posAttr.needsUpdate = true;
+        }
       });
 
       renderer.render(scene, camera);
@@ -432,6 +533,10 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
           const s = Math.floor(state.elapsed_ms / 1000);
           const ms = Math.floor((state.elapsed_ms % 1000) / 10);
           el.textContent = `${String(s).padStart(2, "0")}.${String(ms).padStart(2, "0")}`;
+        } else if (state.status === "error") {
+          // Freeze timer and show ERR
+          el.textContent = "ERR";
+          el.style.color = "#ef4444";
         } else if (
           state.status === "running" &&
           raceStartTimeRef.current
@@ -468,6 +573,8 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
           const cssTop = TRACK_HEIGHT / 2 - laneY - 28;
           const color = m.color || NEON_COLORS[i % NEON_COLORS.length];
           const position = positionOverlays[m.id];
+          const state = modelStates[m.id];
+          const isError = state && state.status === "error";
 
           return (
             <div
@@ -479,10 +586,12 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
               }}
             >
               <span
-                className="text-[8px] uppercase neon-flicker"
+                className={`text-[8px] uppercase ${isError ? "error-flicker" : "neon-flicker"}`}
                 style={{
-                  color,
-                  textShadow: `0 0 6px ${color}`,
+                  color: isError ? "#ef4444" : color,
+                  textShadow: isError
+                    ? "0 0 8px #ef4444"
+                    : `0 0 6px ${color}`,
                 }}
               >
                 {m.label}
@@ -496,6 +605,11 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
               >
                 00.00
               </span>
+              {isError && (
+                <span className="text-[8px] error-flicker font-bold uppercase">
+                  Crashed!
+                </span>
+              )}
               {position != null && (
                 <span
                   className="text-[10px] neon-yellow blink font-bold"

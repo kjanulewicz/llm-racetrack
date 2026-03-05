@@ -5,6 +5,8 @@ import RacePage from "./pages/RacePage";
 import HistoryPage from "./pages/HistoryPage";
 import SharedPage from "./pages/SharedPage";
 import SettingsPage from "./pages/SettingsPage";
+import SettingsDrawer from "./components/SettingsDrawer";
+import useModels from "./hooks/useModels";
 
 const NAV_ITEMS = [
   { key: "race", label: "Race" },
@@ -41,17 +43,19 @@ function App() {
 
 function AuthenticatedApp() {
   const [page, setPage] = useState("race");
+  const [settingsDrawerOpen, setSettingsDrawerOpen] = useState(false);
   const { instance, accounts } = useMsal();
+  const { models, refresh: refreshModels } = useModels();
   const userName = accounts?.[0]?.name || accounts?.[0]?.username || "";
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white p-4 md:p-6">
-      <header className="flex items-center justify-between mb-6 pb-3 border-b-2 border-[#333366]">
+      <header className="flex flex-wrap items-center justify-between mb-6 pb-3 border-b-2 border-[#333366] gap-2">
         <h1 className="text-lg md:text-xl neon-cyan neon-flicker uppercase tracking-wider">
           LLM-Racetrack
         </h1>
-        <div className="flex items-center gap-2">
-          <nav className="flex items-center gap-1">
+        <div className="flex items-center gap-2 flex-wrap">
+          <nav className="flex items-center gap-1 flex-wrap">
             {NAV_ITEMS.map((item) => (
               <button
                 key={item.key}
@@ -65,6 +69,13 @@ function AuthenticatedApp() {
                 {item.label}
               </button>
             ))}
+            <button
+              onClick={() => setSettingsDrawerOpen(true)}
+              className="px-2 md:px-3 py-1.5 text-[8px] md:text-[10px] uppercase tracking-wide text-gray-500 hover:text-[#ffee00] border-2 border-transparent transition-colors"
+              title="Quick Settings"
+            >
+              ⚙
+            </button>
           </nav>
           {userName && (
             <span className="text-[8px] text-gray-500 uppercase hidden md:inline">
@@ -97,6 +108,17 @@ function AuthenticatedApp() {
         {page === "shared" && <SharedPage />}
         {page === "settings" && <SettingsPage />}
       </main>
+
+      {/* Global settings drawer */}
+      <SettingsDrawer
+        open={settingsDrawerOpen}
+        onClose={() => {
+          setSettingsDrawerOpen(false);
+          refreshModels();
+        }}
+        models={models}
+        onSettingsChange={() => {}}
+      />
     </div>
   );
 }

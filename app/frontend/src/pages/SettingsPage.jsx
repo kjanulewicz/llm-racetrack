@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "../utils/api";
 import useModels from "../hooks/useModels";
 import usePromptTemplates from "../hooks/usePromptTemplates";
+import SettingsDrawer from "../components/SettingsDrawer";
 
 const TABS = [
   { key: "models", label: "My Models" },
@@ -10,22 +11,32 @@ const TABS = [
 ];
 
 /**
- * Settings page with three tabs:
+ * Settings page with three tabs and a slide-out drawer for quick model config.
  * - My Models: list + delete saved model configs via DELETE /api/me/models/{id}
  * - Prompt Templates: list + delete
  * - Preferences: default model selection saved via PATCH /api/me/preferences
  */
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState("models");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const { models, refresh } = useModels();
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-sm neon-cyan neon-flicker uppercase tracking-wider">
-        Settings
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm neon-cyan neon-flicker uppercase tracking-wider">
+          Settings
+        </h2>
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="px-3 py-1.5 text-[8px] uppercase tracking-wider pixel-border-cyan text-[#3cf] hover:bg-[#3cf] hover:text-[#0a0a1a] transition-colors"
+        >
+          Quick Config ⚙
+        </button>
+      </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 border-b-2 border-[#333366]">
+      <div className="flex flex-wrap gap-1 border-b-2 border-[#333366]">
         {TABS.map((tab) => (
           <button
             key={tab.key}
@@ -44,6 +55,17 @@ export default function SettingsPage() {
       {activeTab === "models" && <ModelsTab />}
       {activeTab === "templates" && <TemplatesTab />}
       {activeTab === "preferences" && <PreferencesTab />}
+
+      {/* Settings drawer (slide-out panel) */}
+      <SettingsDrawer
+        open={drawerOpen}
+        onClose={() => {
+          setDrawerOpen(false);
+          refresh();
+        }}
+        models={models}
+        onSettingsChange={() => {}}
+      />
     </div>
   );
 }

@@ -38,7 +38,7 @@ export default function ModelSelector({
         </h2>
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3 model-selector-row">
         {activeModels.map((m) => (
           <ModelSlotCard
             key={m.id}
