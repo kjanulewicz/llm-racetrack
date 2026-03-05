@@ -1,10 +1,17 @@
 import { useIsAuthenticated, useMsal } from "@azure/msal-react";
 import { loginRequest } from "./auth/msal.config";
-import useModels from "./hooks/useModels";
-import AddModelModal from "./components/AddModelModal";
-import SystemPromptEditor from "./components/SystemPromptEditor";
-import PromptTemplateDrawer from "./components/PromptTemplateDrawer";
 import { useState } from "react";
+import RacePage from "./pages/RacePage";
+import HistoryPage from "./pages/HistoryPage";
+import SharedPage from "./pages/SharedPage";
+import SettingsPage from "./pages/SettingsPage";
+
+const NAV_ITEMS = [
+  { key: "race", label: "Race" },
+  { key: "history", label: "History" },
+  { key: "shared", label: "Shared" },
+  { key: "settings", label: "Settings" },
+];
 
 function App() {
   const isAuthenticated = useIsAuthenticated();
@@ -27,21 +34,8 @@ function App() {
 }
 
 function AuthenticatedApp() {
-  const { models, loading, refresh } = useModels();
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [prompts, setPrompts] = useState({});
-  const [activeSlotId, setActiveSlotId] = useState(null);
-
-  function handlePromptChange(modelId, value) {
-    setPrompts((prev) => ({ ...prev, [modelId]: value }));
-  }
-
-  function handleTemplateSelect(content) {
-    if (activeSlotId) {
-      setPrompts((prev) => ({ ...prev, [activeSlotId]: content }));
-    }
-  }
+  const [page, setPage] = useState("race");
+  const { instance } = useMsal();
 
   return (
     <div className="min-h-screen bg-[#0a0a1a] text-white p-6">
@@ -49,76 +43,35 @@ function AuthenticatedApp() {
         <h1 className="text-2xl font-bold text-cyan-400 uppercase tracking-wider">
           LLM Racetrack
         </h1>
+        <nav className="flex items-center gap-1">
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setPage(item.key)}
+              className={`px-3 py-1.5 text-xs uppercase tracking-wide rounded transition-colors ${
+                page === item.key
+                  ? "bg-cyan-400/10 text-cyan-400 border border-cyan-400"
+                  : "text-gray-400 hover:text-white border border-transparent"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+          <button
+            onClick={() => instance.logoutRedirect()}
+            className="ml-4 px-3 py-1.5 text-xs uppercase tracking-wide text-gray-500 hover:text-red-400 transition-colors"
+          >
+            Logout
+          </button>
+        </nav>
       </header>
 
-      {/* Model Slots */}
-      <section className="mb-6">
-        <h2 className="text-sm text-gray-400 uppercase tracking-wide mb-3">
-          Model Slots
-        </h2>
-
-        {loading && <p className="text-gray-500 text-sm">Loading models…</p>}
-
-        <div className="flex flex-wrap gap-3">
-          {models.map((m) => (
-            <div
-              key={m.id}
-              className="px-4 py-2 bg-gray-800 border-2 rounded text-sm"
-              style={{ borderColor: m.color }}
-            >
-              <span style={{ color: m.color }}>{m.label}</span>
-            </div>
-          ))}
-
-          <button
-            onClick={() => setAddModalOpen(true)}
-            className="px-4 py-2 border-2 border-dashed border-gray-600 text-gray-400 rounded hover:border-cyan-400 hover:text-cyan-400 text-sm transition-colors"
-          >
-            + Add Model
-          </button>
-        </div>
-      </section>
-
-      {/* System Prompt Editors */}
-      <section className="mb-6 flex flex-col gap-2">
-        {models.map((m) => (
-          <div key={m.id} className="flex items-start gap-2">
-            <div className="flex-1">
-              <SystemPromptEditor
-                modelLabel={m.label}
-                color={m.color}
-                value={prompts[m.id] || ""}
-                onChange={(v) => handlePromptChange(m.id, v)}
-              />
-            </div>
-            <button
-              onClick={() => {
-                setActiveSlotId(m.id);
-                setDrawerOpen(true);
-              }}
-              className="text-xs text-cyan-400 hover:text-cyan-300 mt-1 transition-colors whitespace-nowrap"
-              title="Browse prompt templates"
-            >
-              Templates →
-            </button>
-          </div>
-        ))}
-      </section>
-
-      {/* Add Model Modal */}
-      <AddModelModal
-        open={addModalOpen}
-        onClose={() => setAddModalOpen(false)}
-        onSaved={refresh}
-      />
-
-      {/* Prompt Template Drawer */}
-      <PromptTemplateDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        onSelect={handleTemplateSelect}
-        currentPrompt={activeSlotId ? prompts[activeSlotId] || "" : ""}
-      />
+      <main>
+        {page === "race" && <RacePage />}
+        {page === "history" && <HistoryPage />}
+        {page === "shared" && <SharedPage />}
+        {page === "settings" && <SettingsPage />}
+      </main>
     </div>
   );
 }
