@@ -9,7 +9,10 @@ const LANE_PADDING = 30;
 const CAR_WIDTH = 40;
 const CAR_HEIGHT = 20;
 const FINISH_LINE_WIDTH = 16;
+/** Default ceiling for progress animation (section 9.2 of the brief). */
 const ESTIMATED_CEILING_MS = 20000;
+/** Cars animate up to this fraction before the done event snaps them to 1.0. */
+const MAX_ANIMATED_PROGRESS = 0.95;
 
 /**
  * Creates a pixel-art car canvas texture in the given neon color.
@@ -119,7 +122,7 @@ function createConfetti(scene, x, y) {
   return { points, velocities, age: 0 };
 }
 
-const POSITION_LABELS = ["1ST", "2ND", "3RD", "4TH"];
+const POSITION_LABELS = { 1: "1ST", 2: "2ND", 3: "3RD", 4: "4TH" };
 
 /**
  * Three.js race track with orthographic camera, dynamic lanes,
@@ -191,7 +194,7 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
       if (state.status !== "running") return 0;
       if (!raceStartTimeRef.current) return 0;
       const elapsed = performance.now() - raceStartTimeRef.current;
-      return Math.min(elapsed / ESTIMATED_CEILING_MS, 0.95);
+      return Math.min(elapsed / ESTIMATED_CEILING_MS, MAX_ANIMATED_PROGRESS);
     },
     [modelStates]
   );
@@ -500,7 +503,7 @@ export default function RaceTrack({ models, modelStates, raceStatus }) {
                     textShadow: "0 0 8px #ffee00",
                   }}
                 >
-                  {POSITION_LABELS[position - 1] || `${position}TH`}
+                  {POSITION_LABELS[position] || `${position}TH`}
                 </span>
               )}
             </div>
