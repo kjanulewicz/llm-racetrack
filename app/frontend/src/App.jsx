@@ -19,13 +19,19 @@ function App() {
 
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[#0a0a1a] gap-8">
+        <h1 className="text-2xl neon-cyan neon-flicker uppercase">
+          LLM Racetrack
+        </h1>
         <button
           onClick={() => instance.loginRedirect(loginRequest)}
-          className="px-6 py-3 text-lg font-bold text-gray-900 bg-cyan-400 rounded hover:bg-cyan-300 transition-colors uppercase tracking-wider"
+          className="px-6 py-3 text-xs font-bold bg-[#0a0a1a] pixel-border-cyan text-[#3cf] uppercase tracking-wider hover:bg-[#3cf] hover:text-[#0a0a1a] transition-colors"
         >
           Sign in with Azure AD
         </button>
+        <span className="insert-coin text-[10px] uppercase">
+          Insert Coin
+        </span>
       </div>
     );
   }
@@ -35,37 +41,56 @@ function App() {
 
 function AuthenticatedApp() {
   const [page, setPage] = useState("race");
-  const { instance } = useMsal();
+  const { instance, accounts } = useMsal();
+  const userName = accounts?.[0]?.name || accounts?.[0]?.username || "";
 
   return (
-    <div className="min-h-screen bg-[#0a0a1a] text-white p-6">
-      <header className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-bold text-cyan-400 uppercase tracking-wider">
-          LLM Racetrack
+    <div className="min-h-screen bg-[#0a0a1a] text-white p-4 md:p-6">
+      <header className="flex items-center justify-between mb-6 pb-3 border-b-2 border-[#333366]">
+        <h1 className="text-lg md:text-xl neon-cyan neon-flicker uppercase tracking-wider">
+          LLM-Racetrack
         </h1>
-        <nav className="flex items-center gap-1">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.key}
-              onClick={() => setPage(item.key)}
-              className={`px-3 py-1.5 text-xs uppercase tracking-wide rounded transition-colors ${
-                page === item.key
-                  ? "bg-cyan-400/10 text-cyan-400 border border-cyan-400"
-                  : "text-gray-400 hover:text-white border border-transparent"
-              }`}
-            >
-              {item.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2">
+          <nav className="flex items-center gap-1">
+            {NAV_ITEMS.map((item) => (
+              <button
+                key={item.key}
+                onClick={() => setPage(item.key)}
+                className={`px-2 md:px-3 py-1.5 text-[8px] md:text-[10px] uppercase tracking-wide transition-colors ${
+                  page === item.key
+                    ? "pixel-border-cyan text-[#3cf]"
+                    : "text-gray-500 hover:text-[#3cf] border-2 border-transparent"
+                }`}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+          {userName && (
+            <span className="text-[8px] text-gray-500 uppercase hidden md:inline">
+              {userName}
+            </span>
+          )}
           <button
             onClick={() => instance.logoutRedirect()}
-            className="ml-4 px-3 py-1.5 text-xs uppercase tracking-wide text-gray-500 hover:text-red-400 transition-colors"
+            className="px-2 py-1.5 text-[8px] uppercase tracking-wide text-gray-600 hover:text-[#ff3cac] transition-colors pixel-border-pink"
+            style={{ borderColor: "transparent", boxShadow: "none" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.borderColor = "#ff3cac";
+              e.currentTarget.style.boxShadow =
+                "0 0 12px #ff3cac, inset 0 0 8px rgba(0,0,0,0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "transparent";
+              e.currentTarget.style.boxShadow = "none";
+            }}
           >
             Logout
           </button>
-        </nav>
+        </div>
       </header>
 
+      {/* INSERT COIN blink when on race page and idle */}
       <main>
         {page === "race" && <RacePage />}
         {page === "history" && <HistoryPage />}

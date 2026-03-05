@@ -35,18 +35,19 @@ export default function PromptTemplateDrawer({
 
   return (
     <div
-      className={`fixed inset-y-0 right-0 z-50 w-80 bg-gray-900 border-l-2 border-cyan-400 shadow-lg shadow-cyan-400/20 transform transition-transform duration-200 ${
+      className={`fixed inset-y-0 right-0 z-50 w-80 bg-[#0e0e24] border-l-2 border-[#3cf] transform transition-transform duration-200 ${
         open ? "translate-x-0" : "translate-x-full"
       }`}
+      style={{ boxShadow: open ? "0 0 20px rgba(51,204,255,0.3)" : "none" }}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-700">
-        <h3 className="text-sm font-bold text-cyan-400 uppercase tracking-wider">
+      <div className="flex items-center justify-between px-4 py-3 border-b-2 border-[#333366]">
+        <h3 className="text-[10px] neon-cyan uppercase tracking-wider">
           Prompt Templates
         </h3>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-white text-lg leading-none"
+          className="text-gray-500 hover:text-white text-sm leading-none"
         >
           ✕
         </button>
@@ -55,11 +56,11 @@ export default function PromptTemplateDrawer({
       <div className="flex flex-col h-full overflow-y-auto p-4 gap-3">
         {/* Template List */}
         {loading && (
-          <p className="text-gray-500 text-xs">Loading templates…</p>
+          <p className="text-gray-600 text-[8px]">Loading templates…</p>
         )}
 
         {!loading && templates.length === 0 && (
-          <p className="text-gray-500 text-xs">No saved templates yet.</p>
+          <p className="text-gray-600 text-[8px]">No saved templates yet.</p>
         )}
 
         {templates.map((t) => (
@@ -69,10 +70,10 @@ export default function PromptTemplateDrawer({
               onSelect(t.content);
               onClose();
             }}
-            className="text-left p-3 bg-gray-800 border border-gray-700 rounded hover:border-cyan-400 transition-colors"
+            className="text-left p-3 bg-[#0a0a1a] border-2 border-[#333366] hover:border-[#3cf] transition-colors"
           >
-            <p className="text-sm text-white font-medium">{t.name}</p>
-            <p className="text-xs text-gray-400 mt-1 line-clamp-2">
+            <p className="text-[10px] text-white uppercase">{t.name}</p>
+            <p className="text-[8px] text-gray-500 mt-1 line-clamp-2">
               {t.content}
             </p>
           </button>
@@ -80,8 +81,8 @@ export default function PromptTemplateDrawer({
 
         {/* Save Current Prompt */}
         {currentPrompt && (
-          <div className="mt-4 pt-4 border-t border-gray-700 flex flex-col gap-2">
-            <p className="text-xs text-gray-400 uppercase tracking-wide">
+          <div className="mt-4 pt-4 border-t-2 border-[#333366] flex flex-col gap-2">
+            <p className="text-[8px] text-gray-500 uppercase tracking-wider">
               Save current prompt as template
             </p>
             <input
@@ -89,17 +90,17 @@ export default function PromptTemplateDrawer({
               value={newName}
               onChange={(e) => setNewName(e.target.value)}
               placeholder="Template name"
-              className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm focus:border-cyan-400 focus:outline-none"
+              className="bg-[#0a0a1a] border-2 border-[#333366] text-white px-3 py-2 text-[10px] focus:border-[#3cf] focus:outline-none"
             />
             <button
               onClick={handleSaveAsTemplate}
               disabled={saving || !newName.trim()}
-              className="px-3 py-2 text-sm text-gray-900 bg-cyan-400 rounded font-semibold hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-2 text-[10px] text-[#0a0a1a] bg-[#3cf] font-semibold hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-colors uppercase"
             >
               {saving ? "Saving…" : "Save Template"}
             </button>
             {saveError && (
-              <p className="text-red-400 text-xs">{saveError}</p>
+              <p className="text-[10px] text-[#ff3cac]">{saveError}</p>
             )}
           </div>
         )}

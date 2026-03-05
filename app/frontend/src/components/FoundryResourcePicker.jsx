@@ -40,14 +40,14 @@ export default function FoundryResourcePicker({ value, onChange }) {
     <div className="flex flex-col gap-3">
       {/* Subscription Dropdown */}
       <label className="flex flex-col gap-1">
-        <span className="text-xs text-gray-400 uppercase tracking-wide">
+        <span className="text-[8px] text-gray-500 uppercase tracking-wider">
           Subscription
         </span>
         <select
           value={selectedSub}
           onChange={handleSubChange}
           disabled={loading}
-          className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm focus:border-cyan-400 focus:outline-none"
+          className="bg-[#0a0a1a] border-2 border-[#333366] text-white px-3 py-2 text-[10px] focus:border-[#3cf] focus:outline-none"
         >
           <option value="">
             {loading ? "Loading…" : "Select a subscription"}
@@ -62,7 +62,7 @@ export default function FoundryResourcePicker({ value, onChange }) {
 
       {/* Workspace Dropdown */}
       <label className="flex flex-col gap-1">
-        <span className="text-xs text-gray-400 uppercase tracking-wide">
+        <span className="text-[8px] text-gray-500 uppercase tracking-wider">
           Workspace
         </span>
         <select
@@ -72,7 +72,7 @@ export default function FoundryResourcePicker({ value, onChange }) {
           }
           onChange={handleWorkspaceChange}
           disabled={!selectedSub || loading}
-          className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm focus:border-cyan-400 focus:outline-none"
+          className="bg-[#0a0a1a] border-2 border-[#333366] text-white px-3 py-2 text-[10px] focus:border-[#3cf] focus:outline-none"
         >
           <option value="">Select a workspace</option>
           {workspaces.map((ws) => (
@@ -83,7 +83,7 @@ export default function FoundryResourcePicker({ value, onChange }) {
         </select>
       </label>
 
-      {error && <p className="text-red-400 text-xs">{error}</p>}
+      {error && <p className="text-[10px] text-[#ff3cac]">{error}</p>}
     </div>
   );
 }

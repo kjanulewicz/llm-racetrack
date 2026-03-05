@@ -1,0 +1,164 @@
+/* ============================================================
+   Arcade Design System — LLM Racetrack
+   ============================================================ */
+
+/* ---- Base ---- */
+body {
+  background: #0a0a1a;
+  color: #fff;
+  font-family: "Press Start 2P", monospace;
+}
+
+h1, h2, h3, h4, h5, h6,
+button, label, span, nav {
+  font-family: "Press Start 2P", monospace;
+}
+
+input, textarea, select, pre, code {
+  font-family: monospace;
+}
+
+/* ---- Neon glow utility classes ---- */
+.neon-green {
+  color: #00ff88;
+  text-shadow: 0 0 6px #00ff88, 0 0 12px #00ff8866;
+}
+.neon-pink {
+  color: #ff3cac;
+  text-shadow: 0 0 6px #ff3cac, 0 0 12px #ff3cac66;
+}
+.neon-yellow {
+  color: #ffee00;
+  text-shadow: 0 0 6px #ffee00, 0 0 12px #ffee0066;
+}
+.neon-cyan {
+  color: #3cf;
+  text-shadow: 0 0 6px #3cf, 0 0 12px #33ccff66;
+}
+
+/* ---- Scanline overlay ---- */
+.scanline-overlay {
+  position: relative;
+}
+.scanline-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+  z-index: 10;
+}
+
+/* ---- Neon flicker keyframe animation ---- */
+@keyframes neon-flicker {
+  0%,
+  19%,
+  21%,
+  23%,
+  25%,
+  54%,
+  56%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  24%,
+  55% {
+    opacity: 0.6;
+  }
+}
+.neon-flicker {
+  animation: neon-flicker 3s infinite;
+}
+
+/* ---- CSS blink animation ---- */
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+/* ---- Pixel border utility with box-shadow glow ---- */
+.pixel-border {
+  border: 2px solid currentColor;
+  box-shadow: 0 0 8px currentColor, inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+.pixel-border-green {
+  border: 2px solid #00ff88;
+  box-shadow: 0 0 12px #00ff88, inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+.pixel-border-pink {
+  border: 2px solid #ff3cac;
+  box-shadow: 0 0 12px #ff3cac, inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+.pixel-border-yellow {
+  border: 2px solid #ffee00;
+  box-shadow: 0 0 12px #ffee00, inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+.pixel-border-cyan {
+  border: 2px solid #3cf;
+  box-shadow: 0 0 12px #3cf, inset 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Screen shake keyframe ---- */
+@keyframes screen-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10% {
+    transform: translateX(-4px);
+  }
+  20% {
+    transform: translateX(4px);
+  }
+  30% {
+    transform: translateX(-3px);
+  }
+  40% {
+    transform: translateX(3px);
+  }
+  50% {
+    transform: translateX(-2px);
+  }
+  60% {
+    transform: translateX(2px);
+  }
+  70% {
+    transform: translateX(-1px);
+  }
+  80% {
+    transform: translateX(1px);
+  }
+}
+.screen-shake {
+  animation: screen-shake 0.4s ease-out;
+}
+
+/* ---- Arcade panel (dark with neon border glow) ---- */
+.arcade-panel {
+  background: #0e0e24;
+  border: 2px solid #3cf;
+  box-shadow: 0 0 12px rgba(51, 204, 255, 0.3);
+}
+
+/* ---- Insert coin blink ---- */
+.insert-coin {
+  animation: blink 1.2s steps(1) infinite;
+  color: #ffee00;
+  text-shadow: 0 0 8px #ffee00;
+}

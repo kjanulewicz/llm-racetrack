@@ -83,16 +83,17 @@ export default function AddModelModal({ open, onClose, onSaved }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="bg-gray-900 border-2 border-cyan-400 rounded-lg shadow-lg shadow-cyan-400/20 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+      <div className="bg-[#0e0e24] border-2 border-[#3cf] w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
+        style={{ boxShadow: "0 0 20px rgba(51,204,255,0.3)" }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
-          <h2 className="text-lg font-bold text-cyan-400 uppercase tracking-wider">
+        <div className="flex items-center justify-between px-6 py-4 border-b-2 border-[#333366]">
+          <h2 className="text-[10px] neon-cyan uppercase tracking-wider">
             Configure Model
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white text-xl leading-none"
+            className="text-gray-500 hover:text-white text-sm leading-none"
           >
             ✕
           </button>
@@ -105,10 +106,10 @@ export default function AddModelModal({ open, onClose, onSaved }) {
               <button
                 key={p.value}
                 onClick={() => setProvider(p.value)}
-                className={`flex-1 py-2 px-3 text-sm uppercase tracking-wide rounded border-2 transition-colors ${
+                className={`flex-1 py-2 px-3 text-[10px] uppercase tracking-wider border-2 transition-colors ${
                   provider === p.value
-                    ? "border-cyan-400 text-cyan-400 bg-cyan-400/10"
-                    : "border-gray-600 text-gray-400 hover:border-gray-500"
+                    ? "border-[#3cf] text-[#3cf] bg-[#3cf]/10"
+                    : "border-[#333366] text-gray-500 hover:border-gray-500"
                 }`}
               >
                 {p.label}
@@ -127,7 +128,7 @@ export default function AddModelModal({ open, onClose, onSaved }) {
           {/* Endpoint URL (always visible for Foundry, editable) */}
           {provider === "azure_foundry" && (
             <label className="flex flex-col gap-1">
-              <span className="text-xs text-gray-400 uppercase tracking-wide">
+              <span className="text-[8px] text-gray-500 uppercase tracking-wider">
                 Endpoint URL
               </span>
               <input
@@ -135,14 +136,14 @@ export default function AddModelModal({ open, onClose, onSaved }) {
                 value={endpointUrl}
                 onChange={(e) => setEndpointUrl(e.target.value)}
                 placeholder="https://<resource>.inference.ai.azure.com"
-                className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm focus:border-cyan-400 focus:outline-none"
+                className="bg-[#0a0a1a] border-2 border-[#333366] text-white px-3 py-2 text-[10px] focus:border-[#3cf] focus:outline-none"
               />
             </label>
           )}
 
           {/* Model Name */}
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wide">
+            <span className="text-[8px] text-gray-500 uppercase tracking-wider">
               Model Name
             </span>
             <input
@@ -154,13 +155,13 @@ export default function AddModelModal({ open, onClose, onSaved }) {
                   ? "e.g. Mistral-large-2411"
                   : "e.g. gpt-4o"
               }
-              className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm focus:border-cyan-400 focus:outline-none"
+              className="bg-[#0a0a1a] border-2 border-[#333366] text-white px-3 py-2 text-[10px] focus:border-[#3cf] focus:outline-none"
             />
           </label>
 
           {/* Label */}
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wide">
+            <span className="text-[8px] text-gray-500 uppercase tracking-wider">
               Label
             </span>
             <input
@@ -168,13 +169,13 @@ export default function AddModelModal({ open, onClose, onSaved }) {
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder='e.g. "Mistral EU West"'
-              className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm focus:border-cyan-400 focus:outline-none"
+              className="bg-[#0a0a1a] border-2 border-[#333366] text-white px-3 py-2 text-[10px] focus:border-[#3cf] focus:outline-none"
             />
           </label>
 
           {/* Color Picker */}
           <div className="flex flex-col gap-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wide">
+            <span className="text-[8px] text-gray-500 uppercase tracking-wider">
               Color
             </span>
             <div className="flex gap-2">
@@ -182,12 +183,15 @@ export default function AddModelModal({ open, onClose, onSaved }) {
                 <button
                   key={c}
                   onClick={() => setColor(c)}
-                  className={`w-8 h-8 rounded-full border-2 transition-transform ${
+                  className={`w-8 h-8 border-2 transition-transform ${
                     color === c
                       ? "border-white scale-110"
                       : "border-transparent hover:scale-105"
                   }`}
-                  style={{ backgroundColor: c }}
+                  style={{
+                    backgroundColor: c,
+                    boxShadow: color === c ? `0 0 10px ${c}` : "none",
+                  }}
                   title={c}
                 />
               ))}
@@ -195,20 +199,20 @@ export default function AddModelModal({ open, onClose, onSaved }) {
           </div>
 
           {/* Error */}
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && <p className="text-[10px] text-[#ff3cac]">{error}</p>}
 
           {/* Actions */}
           <div className="flex gap-3 justify-end pt-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm text-gray-400 border border-gray-600 rounded hover:text-white hover:border-gray-400 transition-colors"
+              className="px-4 py-2 text-[10px] text-gray-500 border-2 border-[#333366] hover:text-white hover:border-gray-400 transition-colors uppercase"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
               disabled={saving || !modelName}
-              className="px-4 py-2 text-sm text-gray-900 bg-cyan-400 rounded font-semibold hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-[10px] text-[#0a0a1a] bg-[#3cf] font-semibold hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-colors uppercase"
             >
               {saving ? "Saving…" : "Save to my models"}
             </button>

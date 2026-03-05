@@ -20,9 +20,9 @@ export default function TokenBadge({ usage }) {
       {items.map((item) => (
         <span
           key={item.label}
-          className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-gray-700 text-gray-300"
+          className="inline-flex items-center gap-1 text-[8px] uppercase tracking-wider px-2 py-0.5 bg-[#1a1a3e] text-gray-400 border border-[#333366]"
         >
-          <span className="text-gray-500">{item.label}:</span>
+          <span className="text-gray-600">{item.label}:</span>
           <span className="text-white">{formatTokenCount(item.value)}</span>
         </span>
       ))}

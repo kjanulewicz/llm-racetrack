@@ -48,16 +48,17 @@ export default function ShareModal({ open, raceId, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="bg-gray-900 border-2 border-cyan-400 rounded-lg shadow-lg shadow-cyan-400/20 w-full max-w-sm mx-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+      <div className="bg-[#0e0e24] border-2 border-[#3cf] w-full max-w-sm mx-4"
+        style={{ boxShadow: "0 0 20px rgba(51,204,255,0.3)" }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
-          <h2 className="text-lg font-bold text-cyan-400 uppercase tracking-wider">
+        <div className="flex items-center justify-between px-6 py-4 border-b-2 border-[#333366]">
+          <h2 className="text-[10px] neon-cyan uppercase tracking-wider">
             Share Race
           </h2>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-white text-xl leading-none"
+            className="text-gray-500 hover:text-white text-sm leading-none"
           >
             ✕
           </button>
@@ -65,7 +66,7 @@ export default function ShareModal({ open, raceId, onClose }) {
 
         <div className="px-6 py-4 flex flex-col gap-4">
           <label className="flex flex-col gap-1">
-            <span className="text-xs text-gray-400 uppercase tracking-wide">
+            <span className="text-[8px] text-gray-500 uppercase tracking-wider">
               Colleague&apos;s Email
             </span>
             <input
@@ -73,13 +74,13 @@ export default function ShareModal({ open, raceId, onClose }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="colleague@org.com"
-              className="bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm focus:border-cyan-400 focus:outline-none"
+              className="bg-[#0a0a1a] border-2 border-[#333366] text-white px-3 py-2 text-[10px] focus:border-[#3cf] focus:outline-none"
             />
           </label>
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && <p className="text-[10px] text-[#ff3cac]">{error}</p>}
           {success && (
-            <p className="text-green-400 text-sm">
+            <p className="text-[10px] neon-green">
               Race shared successfully!
             </p>
           )}
@@ -87,14 +88,14 @@ export default function ShareModal({ open, raceId, onClose }) {
           <div className="flex gap-3 justify-end">
             <button
               onClick={handleClose}
-              className="px-4 py-2 text-sm text-gray-400 border border-gray-600 rounded hover:text-white hover:border-gray-400 transition-colors"
+              className="px-4 py-2 text-[10px] text-gray-500 border-2 border-[#333366] hover:text-white hover:border-gray-400 transition-colors uppercase"
             >
               Cancel
             </button>
             <button
               onClick={handleShare}
               disabled={sending || !email.trim()}
-              className="px-4 py-2 text-sm text-gray-900 bg-cyan-400 rounded font-semibold hover:bg-cyan-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="px-4 py-2 text-[10px] text-[#0a0a1a] bg-[#3cf] font-semibold hover:opacity-80 disabled:opacity-30 disabled:cursor-not-allowed transition-colors uppercase"
             >
               {sending ? "Sharing…" : "Share"}
             </button>
