@@ -63,7 +63,7 @@ def _build_mock_model(model_id: str) -> ModelConfig:
         provider="mock",
         endpoint_url="https://mock.local",
         color="#38bdf8",
-        created_at=datetime.now(timezone.utc),
+        created_at=datetime(2025, 1, 1, tzinfo=timezone.utc),
     )
 
 
