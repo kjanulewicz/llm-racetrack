@@ -23,7 +23,7 @@ from models.schemas import (
     TokenUsage,
 )
 from db.repositories import race_repo
-from services import azure_openai, azure_foundry
+from services import azure_foundry, azure_openai, mock_streamer
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,9 @@ async def _run_single_model(
 
     try:
         # Select the right service based on provider
-        if model_config.provider == "azure_openai":
+        if model_config.provider == "mock":
+            streamer = mock_streamer.stream_completion
+        elif model_config.provider == "azure_openai":
             streamer = azure_openai.stream_completion
         else:
             streamer = azure_foundry.stream_completion
