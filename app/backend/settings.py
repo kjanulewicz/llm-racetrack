@@ -19,6 +19,11 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
+    # Local development bypass — disables JWT auth entirely.
+    # Must remain False when ENVIRONMENT is anything other than "local".
+    DEV_MODE: bool = False
+    ENVIRONMENT: str = "local"
+
     # Azure Entra ID (single-tenant)
     TENANT_ID: str = ""
     API_CLIENT_ID: str = ""

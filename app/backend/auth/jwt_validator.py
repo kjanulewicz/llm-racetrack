@@ -41,7 +41,7 @@ _settings = get_settings()
 oauth2_scheme = OAuth2AuthorizationCodeBearer(
     authorizationUrl=f"https://login.microsoftonline.com/{_settings.TENANT_ID}/oauth2/v2.0/authorize",
     tokenUrl=f"https://login.microsoftonline.com/{_settings.TENANT_ID}/oauth2/v2.0/token",
-    auto_error=True,
+    auto_error=not _settings.DEV_MODE,
 )
 
 # ---------------------------------------------------------------------------
@@ -160,6 +160,13 @@ async def validate_entra_token(
 # ---------------------------------------------------------------------------
 
 
+_DEV_USER = UserClaims(
+    oid="00000000-0000-0000-0000-000000000000",
+    email="dev@localhost",
+    name="Local Developer",
+)
+
+
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
 ) -> UserClaims:
@@ -168,6 +175,8 @@ async def get_current_user(
     Applied to every protected route.
     """
     settings = get_settings()
+    if settings.DEV_MODE:
+        return _DEV_USER
     payload = await validate_entra_token(
         token,
         tenant_id=settings.TENANT_ID,
